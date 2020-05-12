@@ -8,18 +8,19 @@ import (
 )
 
 func main() {
-	fname, err := checkLogFile()
+	logFileName, err := checkLogFile("test.log")
 	if err != nil {
 		fmt.Printf("Error on log file create/open %s", err)
 		os.Exit(1)
 	}
-	logger, err := NewCustomConfig(fname).Build()
-	//logger, err := zap.NewDevelopment(zap.Option())
+
+	logConfig :=  zap.NewDevelopmentConfig()
+	logConfig.OutputPaths = append(logConfig.OutputPaths, logFileName)
+	logger, err := logConfig.Build()
 	if err != nil {
 		fmt.Printf("", "Zap logger setup error")
 		fmt.Printf("Application exeution stopped ")
 
-		// Linux and Unix exit code tutorial with examples https://shapeshed.com/unix-exit-codes/
 		os.Exit(1)
 		return
 	}
@@ -30,36 +31,16 @@ func main() {
 	logger.Debug("App execution is finished.")
 }
 
-func checkLogFile() (string, error) {
+func checkLogFile(logFileName string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
-	fname := filepath.Join(wd, "test.log")
-	fname, err = filepath.Abs(fname)
+
+	fName, err := filepath.Abs(filepath.Join(wd, logFileName))
 	if err != nil {
 		return "", err
 	}
 
-	if _, err := os.Stat(fname); os.IsNotExist(err) {
-		// create file
-		f, err := os.OpenFile(fname, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-		if err != nil {
-			fmt.Printf("error creating file: %v", err)
-		}
-		defer f.Close()
-	}
-	return fname, nil
-}
-
-func NewCustomConfig(logfname string) zap.Config {
-	outputPaths := []string{"stderr", logfname}
-	return zap.Config{
-		Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
-		Development:      true,
-		Encoding:         "console",
-		EncoderConfig:    zap.NewDevelopmentEncoderConfig(),
-		OutputPaths:      outputPaths,
-		ErrorOutputPaths: []string{"stderr"},
-	}
+	return fName, nil
 }

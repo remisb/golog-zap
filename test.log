@@ -1,4 +1,0 @@
-2020-05-12T13:29:39.466+0300	INFO	golog-zap/main.go:27	Starting golog-zap application.
-2020-05-12T13:29:40.303+0300	INFO	golog-zap/main.go:28	Info level demo log message
-2020-05-12T13:29:41.063+0300	INFO	golog-zap/main.go:29	This log will be shown in the terminal only.
-2020-05-12T13:29:42.537+0300	DEBUG	golog-zap/main.go:30	App execution is finished.
